@@ -99,6 +99,8 @@ void MainWindow::on_rb_input_hex_clicked()
     //enable the control
     enableAllRadioButtion();
     mRadioButtion_Output_Hex->setDisabled(true);
+    mRadioButtion_Output_Ascii->setChecked(true);
+    mOutputFormat = OUTPUT_FORMAT_ASCII;
 }
 
 void MainWindow::on_rb_input_decimal_clicked()
@@ -106,6 +108,8 @@ void MainWindow::on_rb_input_decimal_clicked()
     mInputFormat = INPUT_FORMAT_DECIMAL;
     enableAllRadioButtion();
     mRadioButtion_Output_Decimal->setDisabled(true);
+    mRadioButtion_Output_Hex->setChecked(true);
+    mOutputFormat = OUTPUT_FORMAT_HEX;
 }
 
 void MainWindow::on_rb_input_ascii_clicked()
@@ -113,6 +117,8 @@ void MainWindow::on_rb_input_ascii_clicked()
     mInputFormat = INPUT_FORMAT_ASCII;
     enableAllRadioButtion();
     mRadioButtion_Output_Ascii->setDisabled(true);
+    mRadioButtion_Output_Hex->setChecked(true);
+    mOutputFormat = OUTPUT_FORMAT_HEX;
 }
 
 void MainWindow::on_rb_input_oct_clicked()
@@ -120,6 +126,8 @@ void MainWindow::on_rb_input_oct_clicked()
     mInputFormat = INPUT_FORMAT_OCT;
     enableAllRadioButtion();
     mRadioButtion_Output_Oct->setDisabled(true);
+    mRadioButtion_Output_Hex->setChecked(true);
+    mOutputFormat = OUTPUT_FORMAT_HEX;
 }
 
 void MainWindow::on_rb_input_binary_clicked()
@@ -127,6 +135,8 @@ void MainWindow::on_rb_input_binary_clicked()
     mInputFormat = INPUT_FORMAT_BINARY;
     enableAllRadioButtion();
     mRadioButtion_Output_Binary->setDisabled(true);
+    mRadioButtion_Output_Hex->setChecked(true);
+    mOutputFormat = OUTPUT_FORMAT_HEX;
 }
 
 void MainWindow::on_rb_output_decimal_clicked()

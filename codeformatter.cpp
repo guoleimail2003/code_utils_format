@@ -66,13 +66,15 @@ QString CodeFormatter::hex_2_str(const int input_format, const int output_format
         break;
     }
 
-    QString ret, tmp;
-    QStringList list = hex_val.split(split);
+    QString ret, tmp, val;
+    val = hex_val;
+    QStringList list = val.split(split);
     char c;
-
-    ret.clear();
     for (int i = 0; i < list.size(); i++) {
-        tmp = list.at(i);
+        tmp = list.at(i).trimmed();
+        if (tmp.isEmpty()) {
+            continue;
+        }
         c = tmp.toInt(0, code_format);
         if (DEBUG_PRINT) qDebug("list[%d] = %d", i, c);
         ret.append(c);
@@ -128,23 +130,26 @@ QString CodeFormatter::str_2_hex(const int input_format, const int output_format
         break;
     }
     qDebug("code_format = %d\n", code_format);
-    QString ret,tmp;
+    QString ret,tmp,val;
     QChar c;
-    tmp.clear();
     ret.clear();
-    for (int i = 0; i < hex_val.size(); i++) {
-        char c = hex_val.at(i).toAscii();
+    val = hex_val;
+    val = val.trimmed();
+    for (int i = 0; i < val.size(); i++) {
+        char c = val.at(i).toAscii();
         if (c == ' ') {
             continue;
         }
+        tmp.clear();
         if (output_format == OUTPUT_FORMAT_HEX) {
             tmp.append("0x");
         } else if (output_format == OUTPUT_FORMAT_OCT) {
             tmp.append("0");
         }
-        tmp.append(QString::number(c, code_format).toUpper() + split);
+        tmp.append(QString::number(c, code_format).toUpper());
+        if (i !=  (val.size() -1)) tmp.append(split);
         ret.append(tmp);
     }
-    //
+    if (DEBUG_PRINT) qDebug("ret = %s\n", qPrintable(ret));
     return ret;
 }
