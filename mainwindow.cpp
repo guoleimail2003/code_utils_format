@@ -208,14 +208,12 @@ void MainWindow::on_translate_clicked()
     QString output;
     if (OUTPUT_FORMAT_ASCII == mOutputFormat) {
         if (DEBUG_PRINT) qDebug("call hex_2_str");
-        output = mCodeFormatter.hex_2_str(mInputFormat, mOutputFormat, input_text, QChar(' '));
+        output = mCodeFormatter.digital_2_ascii(mInputFormat, mOutputFormat, input_text);
     } else if (INPUT_FORMAT_ASCII == mInputFormat) {
         if (DEBUG_PRINT) qDebug("call str_2_hex");
-        output = mCodeFormatter.str_2_hex(mInputFormat, mOutputFormat, input_text, QChar(' '));
+        output = mCodeFormatter.ascii_2_digital(mInputFormat, mOutputFormat, input_text);
     } else {
-        if (DEBUG_PRINT) qDebug("Can not find the method to tranlate mInputFormat = %s mOutputFormat = %s",
-                                qPrintable(CommonType::getInputFormat(getTag(), mInputFormat)),
-                                qPrintable(CommonType::getOutputFormat(getTag(), mOutputFormat)));
+        output = mCodeFormatter.digital_2_digital(mInputFormat, mOutputFormat, input_text);
     }
     if (!output.isNull() && !output.isEmpty()) {
         mOutputEdit->setText(output);
