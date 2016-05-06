@@ -12,7 +12,6 @@ CodeFormatter::CodeFormatter(QObject *parent) :
     QObject(parent)
 {
     mSplit = ' ';
-
 }
 
 QString CodeFormatter::ascii_2_digital
@@ -32,10 +31,26 @@ QString CodeFormatter::ascii_2_digital
     if (DEBUG_PRINT) qDebug("Enter the function = %s,", "ascii_2_digital");
 
     //get split from the input
-    QChar split = getSplit(input);
-    if (DEBUG_PRINT) qDebug("Func name = %s, split = %x\n", "ascii_2_digital", split.toLatin1());
-    QString ret = str_2_hex(input_format, output_format, input, split);
+    QString ret;
 
+    switch(output_format) {
+    case OUTPUT_FORMAT_HEX:
+        ret = ascii_2_hex(input);
+        break;
+    case OUTPUT_FORMAT_DECIMAL:
+        ret = ascii_2_decimal(input);
+        break;
+    case OUTPUT_FORMAT_OCT:
+        ret = ascii_2_oct(input);
+        break;
+    case OUTPUT_FORMAT_BINARY:
+        ret = ascii_2_binary(input);
+        break;
+    default:
+        if (DEBUG_PRINT) qDebug("Func name =%s , can not find the output_format function to handle the the request", "ascii_2_digital");
+        ret = ascii_2_decimal(input);
+        break;
+    }
     if (DEBUG_PRINT) qDebug("exit func = %s\n", "ascii_2_digital");
     return ret;
 }
@@ -48,7 +63,7 @@ QString CodeFormatter::ascii_2_digital
  * @return
  */
 QString CodeFormatter::digital_2_ascii
-(const int input_format, const int output_format, QString input)
+(const int input_format, const int output_format, const QString input)
 {
     if (input_format <= INPUT_FORMAT_START || input_format >= INPUT_FORMAT_INVALID
             || output_format <= OUTPUT_FORMAT_START || output_format >= OUTPUT_FORMAT_INVALID
@@ -63,11 +78,26 @@ QString CodeFormatter::digital_2_ascii
 
     if (DEBUG_PRINT) qDebug("Enter the function = %s,", "digital_2_ascii");
 
-    //get split from the input
-    QChar split = getSplit(input);
-    if (DEBUG_PRINT) qDebug("Func name = %s, split = %d\n", "digital_2_ascii", split.toLatin1());
-    QString ret = hex_2_str(input_format, OUTPUT_FORMAT_ASCII, input, split);
-
+    QString ret;
+    switch (input_format) {
+    case INPUT_FORMAT_HEX:
+        ret = hex_2_ascii(input);
+        break;
+    case INPUT_FORMAT_DECIMAL:
+        ret = decimal_2_ascii(input);
+        break;
+    case INPUT_FORMAT_OCT:
+        ret = oct_2_ascii(input);
+        break;
+    case INPUT_FORMAT_BINARY:
+        ret = binary_2_ascii(input);
+        break;
+    default:
+        if (DEBUG_PRINT) qDebug("Func name =%s , can not find the output_format function to handle the the request", "digital_2_ascii");
+        ret = decimal_2_ascii(input);
+        break;
+    }
+    if (DEBUG_PRINT) qDebug("ret = %s \n", qPrintable(ret));
     if (DEBUG_PRINT) qDebug("exit func = %s\n", "digital_2_ascii");
     return ret;
 }
@@ -100,8 +130,51 @@ QString CodeFormatter::digital_2_digital
     //get split from the input
     QChar split = getSplit(input);
     if (DEBUG_PRINT) qDebug("Func name = %s, split = %d\n", "digital_2_digital", split.toLatin1());
-    QString ret = hex_2_str(input_format, OUTPUT_FORMAT_ASCII, input, split);
 
+    QString ret;
+    int func_mask = input_format << 8 | output_format;
+    switch (func_mask) {
+    case MASK_HEX_2_DECIMAIL:
+        ret = hex_2_decimal(input);
+        break;
+    case MASK_HEX_2_OCT:
+        ret = hex_2_oct(input);
+        break;
+    case MASK_HEX_2_BINARY:
+        ret = hex_2_binary(input);
+        break;
+    case MASK_DECIMAL_2_HEX:
+        ret = decimal_2_hex(input);
+        break;
+    case MASK_DECIMAL_2_OCT:
+        ret = decimal_2_oct(input);
+        break;
+    case MASK_DECIMAL_2_BINARY:
+        ret = decimal_2_binary(input);
+        break;
+    case MASK_OCT_2_HEX:
+        ret = oct_2_hex(input);
+        break;
+    case MASK_OCT_2_DECIMAL:
+        ret = oct_2_decimal(input);
+        break;
+    case MASK_OCT_2_BIANRY:
+        ret = oct_2_binary(input);
+        break;
+    case MASK_BINARY_2_HEX:
+        ret = binary_2_hex(input);
+        break;
+    case MASK_BINARY_2_DECIMAL:
+        ret = binary_2_decimal(input);
+        break;
+    case MASK_BINARY_2_OCT:
+        ret = binary_2_oct(input);
+        break;
+    default:
+        if (DEBUG_PRINT) qDebug("Func name =%s , can not find the output_format function to handle the the request", "digital_2_digital");
+        break;
+    }
+    if (DEBUG_PRINT) qDebug("ret = %s \n", qPrintable(ret));
     if (DEBUG_PRINT) qDebug("exit func = %s\n", "digital_2_digital");
     return ret;
 }
@@ -282,6 +355,13 @@ QString CodeFormatter::ascii_2_hex(const QString input)
 QString CodeFormatter::ascii_2_decimal(const QString input)
 {
     QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "ascii_2_decimal", qPrintable(input));
+        }
+    }
+    ret = str_2_hex(INPUT_FORMAT_ASCII, OUTPUT_FORMAT_DECIMAL, input, getSplit(input));
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s \n", "ascii_2_decimal", qPrintable(ret));
     return ret;
 }
 
@@ -289,6 +369,13 @@ QString CodeFormatter::ascii_2_decimal(const QString input)
 QString CodeFormatter::ascii_2_oct(const QString input)
 {
     QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "ascii_2_oct", qPrintable(input));
+        }
+    }
+    ret = str_2_hex(INPUT_FORMAT_ASCII, OUTPUT_FORMAT_OCT, input, getSplit(input));
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s \n", "ascii_2_oct", qPrintable(ret));
     return ret;
 }
 
@@ -296,5 +383,323 @@ QString CodeFormatter::ascii_2_oct(const QString input)
 QString CodeFormatter::ascii_2_binary(const QString input)
 {
     QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "ascii_2_binary", qPrintable(input));
+        }
+    }
+    ret = str_2_hex(INPUT_FORMAT_ASCII, OUTPUT_FORMAT_BINARY, input, getSplit(input));
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s \n", "ascii_2_binary", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::hex_2_ascii(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "hex_2_ascii", qPrintable(input));
+        }
+    }
+    ret = hex_2_str(INPUT_FORMAT_HEX, OUTPUT_FORMAT_ASCII, input, getSplit(input));
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s \n", "hex_2_ascii", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::decimal_2_ascii(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "decimal_2_ascii", qPrintable(input));
+        }
+    }
+    ret = hex_2_str(INPUT_FORMAT_DECIMAL, OUTPUT_FORMAT_ASCII, input, getSplit(input));
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s \n", "decimal_2_ascii", qPrintable(ret));
+    return ret;
+}
+QString CodeFormatter::oct_2_ascii(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "oct_2_ascii", qPrintable(input));
+        }
+    }
+    ret = hex_2_str(INPUT_FORMAT_OCT, OUTPUT_FORMAT_ASCII, input, getSplit(input));
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s \n", "oct_2_ascii", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::binary_2_ascii(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "binary_2_ascii", qPrintable(input));
+        }
+    }
+    ret = hex_2_str(INPUT_FORMAT_BINARY, OUTPUT_FORMAT_ASCII, input, getSplit(input));
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s \n", "binary_2_ascii", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::hex_2_decimal(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "hex_2_decimal", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,16);
+        ret.append(QString::number(tmp, 10));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "hex_2_decimal", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::hex_2_oct(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "hex_2_oct", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,16);
+        ret.append(QString::number(tmp, 8));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "hex_2_oct", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::hex_2_binary(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "hex_2_binary", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,16);
+        ret.append(QString::number(tmp, 2));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "hex_2_binary", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::decimal_2_hex(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "decimal_2_hex", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,10);
+        ret.append(QString::number(tmp, 16));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "decimal_2_hex", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::decimal_2_oct(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "decimal_2_oct", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,10);
+        ret.append(QString::number(tmp, 8));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "decimal_2_oct", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::decimal_2_binary(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "decimal_2_binary", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,10);
+        ret.append(QString::number(tmp, 2));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "decimal_2_binary", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::oct_2_hex(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "oct_2_hex", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,8);
+        ret.append(QString::number(tmp, 16));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "oct_2_hex", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::oct_2_decimal(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "oct_2_decimal", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,8);
+        ret.append(QString::number(tmp, 10));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "oct_2_decimal", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::oct_2_binary(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "oct_2_binary", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,8);
+        ret.append(QString::number(tmp, 2));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "oct_2_binary", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::binary_2_hex(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "binary_2_hex", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,2);
+        ret.append(QString::number(tmp, 16));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "decimal_2_hex", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::binary_2_decimal(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "binary_2_decimal", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,2);
+        ret.append(QString::number(tmp, 10));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "binary_2_decimail", qPrintable(ret));
+    return ret;
+}
+
+QString CodeFormatter::binary_2_oct(const QString input) {
+    QString ret;
+    if (input.isNull() || input.isEmpty()) {
+        if (DEBUG_PRINT) {
+            qFatal("invalid paramerters func = %s, input = %s\n", "binary_2_oct", qPrintable(input));
+        }
+    }
+    QChar split = getSplit(input);
+    QStringList list = input.split(split);
+    int tmp = 0;
+    ret.clear();
+    for (int i = 0; i < list.size(); i++) {
+        tmp = list.at(i).toInt(0,2);
+        ret.append(QString::number(tmp, 8));
+        if (i != (list.size() - 1)) {
+            ret.append(' ');
+        }
+    }
+    if (DEBUG_PRINT) qDebug("func = %s, ret = %s\n", "binary_2_oct", qPrintable(ret));
     return ret;
 }

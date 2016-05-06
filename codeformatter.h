@@ -64,7 +64,7 @@ public:
 
     //================digital to digital =======================
     //From hex to decimal
-    QString hex_2_decimail(const QString input);
+    QString hex_2_decimal(const QString input);
 
     //From hex to oct
     QString hex_2_oct(const QString input);
@@ -85,7 +85,7 @@ public:
     QString oct_2_hex(const QString input);
 
     //From oct to decimal
-    QString oct_2_decimail(const QString input);
+    QString oct_2_decimal(const QString input);
 
     //From oct to binary
     QString oct_2_binary(const QString input);
@@ -94,7 +94,7 @@ public:
     QString binary_2_hex(const QString input);
 
     //From binary to decimal
-    QString binary_2_decimail(const QString input);
+    QString binary_2_decimal(const QString input);
 
     //From binary to oct
     QString binary_2_oct(const QString input);

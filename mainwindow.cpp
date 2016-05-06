@@ -207,12 +207,13 @@ void MainWindow::on_translate_clicked()
     }
     QString output;
     if (OUTPUT_FORMAT_ASCII == mOutputFormat) {
-        if (DEBUG_PRINT) qDebug("call hex_2_str");
+        if (DEBUG_PRINT) qDebug("call digital_2_ascii");
         output = mCodeFormatter.digital_2_ascii(mInputFormat, mOutputFormat, input_text);
     } else if (INPUT_FORMAT_ASCII == mInputFormat) {
-        if (DEBUG_PRINT) qDebug("call str_2_hex");
+        if (DEBUG_PRINT) qDebug("call ascii_2_digital");
         output = mCodeFormatter.ascii_2_digital(mInputFormat, mOutputFormat, input_text);
     } else {
+        if (DEBUG_PRINT) qDebug("call digital_2_digital");
         output = mCodeFormatter.digital_2_digital(mInputFormat, mOutputFormat, input_text);
     }
     if (!output.isNull() && !output.isEmpty()) {

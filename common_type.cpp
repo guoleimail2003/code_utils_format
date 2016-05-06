@@ -62,4 +62,51 @@ QString CommonType::getOutputFormat(QString caller, const int output) {
     return ret;
 }
 
+QString CommonType::getFuncMask(QString caller, const int mask) {
+    if (mask <= MASK_START || mask >= MASK_INVALID
+            || caller.isNull() || caller.isEmpty()) {
+        qFatal("The output format you input is invalid mask = %d, caller=%s\n", mask, qPrintable(caller));
+    }
+    if (DEBUG_PRINT) qDebug("caller=%s, output = %d\n", qPrintable(caller), mask);
+    QString ret;
+    switch (mask) {
+    case MASK_HEX_2_DECIMAIL:
+        ret = "MASK_HEX_2_DECIMAIL";
+        break;
+    case MASK_HEX_2_OCT:
+        ret = "MASK_HEX_2_OCT";
+        break;
+    case MASK_HEX_2_BINARY:
+        ret = "MASK_HEX_2_BINARY";
+        break;
+    case MASK_DECIMAL_2_HEX:
+        ret = "MASK_DECIMAL_2_HEX";
+        break;
+    case MASK_DECIMAL_2_OCT:
+        ret = "MASK_DECIMAL_2_OCT";
+        break;
+    case MASK_DECIMAL_2_BINARY:
+        ret = "MASK_DECIMAL_2_BINARY";
+        break;
+    case MASK_OCT_2_HEX:
+        ret = "MASK_OCT_2_HEX";
+        break;
+    case MASK_OCT_2_DECIMAL:
+        ret = "MASK_OCT_2_DECIMAL";
+        break;
+    case MASK_OCT_2_BIANRY:
+        ret = "MASK_OCT_2_BIANRY";
+        break;
+    case MASK_BINARY_2_HEX:
+        ret = "MASK_BINARY_2_HEX";
+        break;
+    case MASK_BINARY_2_DECIMAL:
+        ret = "MASK_BINARY_2_DECIMAL";
+        break;
+    case MASK_BINARY_2_OCT:
+        ret = "MASK_BINARY_2_OCT";
+        break;
+    }
+    return ret;
+}
 
