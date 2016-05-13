@@ -194,7 +194,7 @@ QString CodeFormatter::hex_2_str(const int input_format, const int output_format
     if (input_format <= INPUT_FORMAT_START || input_format >= INPUT_FORMAT_INVALID
             || output_format <= OUTPUT_FORMAT_START || output_format >= OUTPUT_FORMAT_INVALID
             || hex_val.isNull() || hex_val.isEmpty()
-            || split.isNull() || !split.isSpace())
+            || split.isNull())
     {
         qFatal("parameter is null or empty, func = %s", "hex_2_str");
     }
